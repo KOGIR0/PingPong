@@ -5,6 +5,7 @@
 
 PingPong::PingPong(const sf::Vector2f& screenSize)
 {
+    this->gameStatus = status::menu;
     this->score = {0, 0};
     this->scoreTxt = new Text("times-new-roman.ttf",
         std::to_string(score[0]) + " : " + std::to_string(score[1]));
@@ -16,6 +17,7 @@ PingPong::PingPong(const sf::Vector2f& screenSize)
     this->leftBar = new Bar({5, 50}, {5, screenSize.y / 2});
     this->rightBar = new Bar({5, 50}, {screenSize.x - 10, screenSize.y / 2});
     this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
+    this->menu = new Menu(screenSize, {"1 player", "2 players"});
 }
 
 PingPong::~PingPong()
@@ -25,9 +27,10 @@ PingPong::~PingPong()
     delete this->leftBar;
     delete this->rightBar;
     delete this->scoreTxt;
+    delete this->menu;
 }
 
-void PingPong::bounceBall()
+void PingPong::processBallCollisions()
 {
     sf::Vector2f ballPos = this->ball->getPosition();
     sf::Vector2f ballSpeed = this->ball->getSpeed();
@@ -47,10 +50,8 @@ void PingPong::bounceBall()
         } else {
             this->score[1]++;
         }
+        this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
         this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
-        sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(0, ballSpeed.y * 2);
-        newSpeed = {-newSpeed.x, -newSpeed.y};
-        this->ball->setSpeed(newSpeed);
     }
     if(this->leftBar->intersect(this->ball->getCircleShape()))
     {
@@ -66,40 +67,126 @@ void PingPong::bounceBall()
     }
 }
 
+void PingPong::moveBars()
+{
+    if(this->p1BtnPressed != pressedBtn::none)
+    {
+        if(this->p1BtnPressed == pressedBtn::up)
+        {
+            this->leftBar->moveUp();
+        } else if(this->p1BtnPressed == pressedBtn::down)
+        {
+            this->leftBar->moveDown();
+        }
+    }
+    if(this->p2BtnPressed != pressedBtn::none)
+    {
+        if(this->p2BtnPressed == pressedBtn::up)
+        {
+            this->rightBar->moveUp();
+        } else if(this->p2BtnPressed == pressedBtn::down)
+        {
+            this->rightBar->moveDown();
+        }
+    }
+}
+
+void PingPong::processKeyPressEvent(const sf::Event& e)
+{
+    if(e.key.code == sf::Keyboard::Up)
+    {
+        this->p1BtnPressed = pressedBtn::up;
+    } else if (e.key.code == sf::Keyboard::Down)
+    {
+        this->p1BtnPressed = pressedBtn::down;
+    } else if (e.key.code == sf::Keyboard::W)
+    {
+        this->p2BtnPressed = pressedBtn::up;
+    } else if (e.key.code == sf::Keyboard::S)
+    {
+        this->p2BtnPressed = pressedBtn::down;
+    }
+}
+
+void PingPong::processKeyReleasedEvent(const sf::Event& e)
+{
+    if(e.key.code == sf::Keyboard::Up)
+    {
+        this->p1BtnPressed = pressedBtn::none;
+    } else if (e.key.code == sf::Keyboard::Down)
+    {
+        this->p1BtnPressed = pressedBtn::none;
+    } else if (e.key.code == sf::Keyboard::W && this->gameStatus == status::pvp)
+    {
+        this->p2BtnPressed = pressedBtn::none;
+    } else if (e.key.code == sf::Keyboard::S && this->gameStatus == status::pvp)
+    {
+        this->p2BtnPressed = pressedBtn::none;
+    }
+}
+
+void PingPong::processMouseBtnPress(const sf::Event& e)
+{
+    sf::Vector2i mousePosition = {e.mouseButton.x, e.mouseButton.y};
+    int pressResult = this->menu->processClick(mousePosition);
+    std::cout << pressResult << std::endl;
+    if(pressResult != -1)
+    {
+        this->score = {0, 0};
+    }
+    if(pressResult == 1)
+    {
+        this->gameStatus = status::pve;
+    } else if (pressResult == 2)
+    {
+        this->gameStatus = status::pvp;
+    }
+}
+
+void PingPong::processEvent(const sf::Event& e)
+{
+    switch(e.type)
+    {
+        case sf::Event::Closed:
+            this->window->close();
+            break;
+        if(this->gameStatus == status::pve || this->gameStatus == status::pve)
+        {
+            case sf::Event::KeyPressed:
+                this->processKeyPressEvent(e);
+                break;
+            case sf::Event::KeyReleased:
+                this->processKeyReleasedEvent(e);
+                break;
+        } else if (this->gameStatus == status::menu)
+        {
+            case sf::Event::MouseButtonPressed:
+                this->processMouseBtnPress(e);
+                break;
+        }
+    }
+}
+
 void PingPong::ProcessEvents()
 {
-    this->bounceBall();
+    this->processBallCollisions();
     this->ball->move();
+    this->moveBars();
     sf::Event e;
     while(this->window->pollEvent(e))
     {
-        switch(e.type)
-        {
-            case sf::Event::Closed:
-                this->window->close();
-            case sf::Event::KeyPressed:
-                if(e.key.code == sf::Keyboard::Up)
-                {
-                    this->leftBar->moveUp();
-                } else if (e.key.code == sf::Keyboard::Down)
-                {
-                    this->leftBar->moveDown();
-                } else if (e.key.code == sf::Keyboard::W)
-                {
-                    this->rightBar->moveUp();
-                } else if (e.key.code == sf::Keyboard::S)
-                {
-                    this->rightBar->moveDown();
-                }
-        }
+        this->processEvent(e);
     }
     // need to change 20 and 40 to bar middle
-    /*if(rightBar->getPosition().y + 20 > this->ball->getPosition().y)
+    if(this->gameStatus == status::pve)
     {
-        this->rightBar->moveUp();
-    } else if(rightBar->getPosition().y + 40 < this->ball->getPosition().y){
-        this->rightBar->moveDown();
-    }*/
+        if(rightBar->getPosition().y + 20 > this->ball->getPosition().y)
+        {
+            this->rightBar->moveUp();
+        } else if(rightBar->getPosition().y + 40 < this->ball->getPosition().y){
+            this->rightBar->moveDown();
+        }
+    }
 }
 
 void PingPong::UpdateWindow()
@@ -109,6 +196,8 @@ void PingPong::UpdateWindow()
     this->window->draw(*this->rightBar);
     this->window->draw(*this->ball);
     this->window->draw(*this->scoreTxt);
+    if(this->gameStatus == status::menu)
+        this->window->draw(*this->menu);
     this->window->display();
 }
 

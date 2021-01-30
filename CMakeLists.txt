@@ -8,8 +8,6 @@ set(SOURCE_FILES
     PingPong.cpp
     Bar.cpp
     Ball.cpp
-    Network/Client.cpp
-    Network/Server.cpp
     UI/Menu.cpp
     UI/Button.cpp
     UI/Sprite.cpp

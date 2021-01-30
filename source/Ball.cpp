@@ -11,7 +11,6 @@ Ball::Ball(const float& radius)
 
 void Ball::setPosition(const sf::Vector2f& position)
 {
-    std::cout << "position set: " << position.x << " " << position.y << std::endl;
     this->cs.setPosition(position.x, position.y);
 }
 
