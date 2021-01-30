@@ -14,10 +14,14 @@ PingPong::PingPong(const sf::Vector2f& screenSize)
     this->window = new sf::RenderWindow(sf::VideoMode(screenSize.x, screenSize.y), "PingPong");
     this->window->setFramerateLimit(50);
     this->ball = new Ball(5);
-    this->leftBar = new Bar({5, 50}, {5, screenSize.y / 2});
-    this->rightBar = new Bar({5, 50}, {screenSize.x - 10, screenSize.y / 2});
+    this->leftBar = new Bar({10, 50}, {20, screenSize.y / 2});
+    this->rightBar = new Bar({10, 50}, {screenSize.x - 30, screenSize.y / 2});
     this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
     this->menu = new Menu(screenSize, {"1 player", "2 players"});
+    this->restartBtn = new Button(10, 10);
+    this->restartBtn->setFillColor(sf::Color::Green);
+    this->p2BtnPressed = pressedBtn::none;
+    this->p1BtnPressed = pressedBtn::none;
 }
 
 PingPong::~PingPong()
@@ -99,12 +103,16 @@ void PingPong::processKeyPressEvent(const sf::Event& e)
     } else if (e.key.code == sf::Keyboard::Down)
     {
         this->p1BtnPressed = pressedBtn::down;
-    } else if (e.key.code == sf::Keyboard::W)
+    }
+    if(this->gameStatus == status::pvp)
     {
-        this->p2BtnPressed = pressedBtn::up;
-    } else if (e.key.code == sf::Keyboard::S)
-    {
-        this->p2BtnPressed = pressedBtn::down;
+        if (e.key.code == sf::Keyboard::W)
+        {
+            this->p2BtnPressed = pressedBtn::up;
+        } else if (e.key.code == sf::Keyboard::S)
+        {
+            this->p2BtnPressed = pressedBtn::down;
+        }
     }
 }
 
@@ -150,20 +158,25 @@ void PingPong::processEvent(const sf::Event& e)
         case sf::Event::Closed:
             this->window->close();
             break;
-        if(this->gameStatus == status::pve || this->gameStatus == status::pve)
-        {
-            case sf::Event::KeyPressed:
-                this->processKeyPressEvent(e);
-                break;
-            case sf::Event::KeyReleased:
-                this->processKeyReleasedEvent(e);
-                break;
-        } else if (this->gameStatus == status::menu)
-        {
-            case sf::Event::MouseButtonPressed:
+        case sf::Event::KeyPressed:
+            this->processKeyPressEvent(e);
+            break;
+        case sf::Event::KeyReleased:
+            this->processKeyReleasedEvent(e);
+            break;
+        case sf::Event::MouseButtonPressed:
+            if(this->gameStatus != status::menu &&
+                this->restartBtn->clicked(sf::Vector2i{e.mouseButton.x, e.mouseButton.y}))
+            {
+                this->score = {0, 0};
+                this->ball->setPosition({this->screenSize.x / 2, this->screenSize.y / 2});
+                this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
+            }
+            if(this->gameStatus == status::menu)
+            {
                 this->processMouseBtnPress(e);
-                break;
-        }
+            }
+            break;
     }
 }
 
@@ -197,7 +210,11 @@ void PingPong::UpdateWindow()
     this->window->draw(*this->ball);
     this->window->draw(*this->scoreTxt);
     if(this->gameStatus == status::menu)
+    {
         this->window->draw(*this->menu);
+    } else {
+        this->window->draw(*this->restartBtn);
+    }
     this->window->display();
 }
 
