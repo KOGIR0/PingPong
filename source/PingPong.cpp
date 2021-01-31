@@ -18,8 +18,8 @@ PingPong::PingPong(const sf::Vector2f& screenSize)
     this->rightBar = new Bar({10, 50}, {screenSize.x - 30, screenSize.y / 2});
     this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
     this->menu = new Menu(screenSize, {"1 player", "2 players"});
-    this->restartBtn = new Button("MenuBtn.png", 25, 25);
-    this->restartBtn->setFillColor(sf::Color::White);
+    this->menuBtn = new Button("MenuBtn.png", 25, 25);
+    this->menuBtn->setFillColor(sf::Color::White);
     this->p2BtnPressed = pressedBtn::none;
     this->p1BtnPressed = pressedBtn::none;
 }
@@ -167,7 +167,7 @@ void PingPong::processEvent(const sf::Event& e)
             break;
         case sf::Event::MouseButtonPressed:
             if(this->gameStatus != status::menu &&
-                this->restartBtn->clicked(sf::Vector2i{e.mouseButton.x, e.mouseButton.y}))
+                this->menuBtn->clicked(sf::Vector2i{e.mouseButton.x, e.mouseButton.y}))
             {
                 this->gameStatus = status::menu;
             }
@@ -212,7 +212,7 @@ void PingPong::UpdateWindow()
     {
         this->window->draw(*this->menu);
     } else {
-        this->window->draw(*this->restartBtn);
+        this->window->draw(*this->menuBtn);
     }
     this->window->display();
 }

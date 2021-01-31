@@ -39,7 +39,7 @@ private:
     Bar* leftBar;
     Bar* rightBar;
     Text* scoreTxt;
-    Button* restartBtn;
+    Button* menuBtn;
     std::vector<int> score;
     Menu* menu;
     status gameStatus;
