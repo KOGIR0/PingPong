@@ -1,4 +1,5 @@
 #include "Button.h"
+#include <iostream>
 
 Button::Button(const float& width, const float& height, const sf::Vector2f& position)
 {
@@ -15,6 +16,7 @@ Button::Button(const std::string& texturePath, const float& width, const float& 
     if (!this->texture.loadFromFile(texturePath))
     {
         // errror loading texture
+        std::cout << "Error loading texture" << std::endl;
     }
     this->texture.setRepeated(false);
     this->rs.setTexture(&this->texture);

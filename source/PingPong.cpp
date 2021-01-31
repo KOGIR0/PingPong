@@ -18,8 +18,8 @@ PingPong::PingPong(const sf::Vector2f& screenSize)
     this->rightBar = new Bar({10, 50}, {screenSize.x - 30, screenSize.y / 2});
     this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
     this->menu = new Menu(screenSize, {"1 player", "2 players"});
-    this->restartBtn = new Button(10, 10);
-    this->restartBtn->setFillColor(sf::Color::Green);
+    this->restartBtn = new Button("MenuBtn.png", 25, 25);
+    this->restartBtn->setFillColor(sf::Color::White);
     this->p2BtnPressed = pressedBtn::none;
     this->p1BtnPressed = pressedBtn::none;
 }
@@ -141,6 +141,7 @@ void PingPong::processMouseBtnPress(const sf::Event& e)
     if(pressResult != -1)
     {
         this->score = {0, 0};
+        this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
     }
     if(pressResult == 1)
     {
@@ -168,9 +169,7 @@ void PingPong::processEvent(const sf::Event& e)
             if(this->gameStatus != status::menu &&
                 this->restartBtn->clicked(sf::Vector2i{e.mouseButton.x, e.mouseButton.y}))
             {
-                this->score = {0, 0};
-                this->ball->setPosition({this->screenSize.x / 2, this->screenSize.y / 2});
-                this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
+                this->gameStatus = status::menu;
             }
             if(this->gameStatus == status::menu)
             {
