@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <memory>
 
 #include "Ball.h"
 #include "Bar.h"
@@ -27,21 +28,20 @@ class PingPong
 {
 public:
     PingPong(const sf::Vector2f& screenSize);
-    ~PingPong();
     void ProcessEvents();
     void UpdateWindow();
     bool IsRunning();
 
 private:
     sf::Vector2f screenSize;
-    sf::RenderWindow* window;
-    Ball* ball;
-    Bar* leftBar;
-    Bar* rightBar;
-    Text* scoreTxt;
-    Button* menuBtn;
+    std::unique_ptr<sf::RenderWindow> window;
+    Ball ball;
+    Bar leftBar;
+    Bar rightBar;
+    std::unique_ptr<Text> scoreTxt;
+    std::unique_ptr<Button> menuBtn;
     std::vector<int> score;
-    Menu* menu;
+    std::unique_ptr<Menu> menu;
     status gameStatus;
     // player1 - left; player2 - right
     pressedBtn p1BtnPressed;

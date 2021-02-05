@@ -27,12 +27,6 @@ sf::Texture Sprite::getTexture()
 	return this->texture;
 }
 
-Sprite::Sprite(const Sprite& s)
-{
-	this->texture = s.texture;
-	this->sprite = s.sprite;
-}
-
 void Sprite::setTexture(const std::string& path)
 {
 	this->texture.setRepeated(false);

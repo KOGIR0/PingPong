@@ -7,7 +7,6 @@
 class Button : public sf::Drawable
 {
 public:
-    Button(const Button& button);
     Button(const float& width = 10.f, const float& height = 10.f, const sf::Vector2f& position = { 0, 0 });
     Button(const std::string& texturePath, const float& width = 10.f,
         const float& height = 10.f, const sf::Vector2f& position = { 0, 0 });

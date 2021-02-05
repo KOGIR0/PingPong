@@ -13,24 +13,19 @@ Button::Button(const std::string& texturePath, const float& width, const float& 
     rs = sf::RectangleShape({ width, height });
     rs.setPosition(position);
     rs.setFillColor(sf::Color::Red);
-    if (!this->texture.loadFromFile(texturePath))
+    sf::Texture t;
+    if (!t.loadFromFile(texturePath))
     {
-        // errror loading texture
-        std::cout << "Error loading texture" << std::endl;
+        std::cerr << "Error loading texture" << std::endl;
     }
-    this->texture.setRepeated(false);
+    t.setRepeated(false);
+    this->texture = t;
     this->rs.setTexture(&this->texture);
 }
 
 sf::Vector2f Button::getSize()
 {
     return this->rs.getSize();
-}
-
-
-Button::Button(const Button& button)
-{
-    this->rs = button.rs;
 }
 
 void Button::setPosition(const sf::Vector2f& position)

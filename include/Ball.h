@@ -6,7 +6,7 @@
 class Ball : public sf::Drawable
 {
 public:
-    Ball(const float& radius);
+    Ball(const float& radius = 5.f);
     void setSpeed(const sf::Vector2f& speed);
     void setPosition(const sf::Vector2f& position);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

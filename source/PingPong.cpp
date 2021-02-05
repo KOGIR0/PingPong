@@ -7,46 +7,37 @@ PingPong::PingPong(const sf::Vector2f& screenSize)
 {
     this->gameStatus = status::menu;
     this->score = {0, 0};
-    this->scoreTxt = new Text("times-new-roman.ttf",
-        std::to_string(score[0]) + " : " + std::to_string(score[1]));
+    this->scoreTxt = std::unique_ptr<Text>(new Text("times-new-roman.ttf",
+        std::to_string(score[0]) + " : " + std::to_string(score[1])));
     this->scoreTxt->setPosition({screenSize.x / 2 , this->scoreTxt->getSize().y});
     this->screenSize = screenSize;
-    this->window = new sf::RenderWindow(sf::VideoMode(screenSize.x, screenSize.y), "PingPong");
+    this->window = std::unique_ptr<sf::RenderWindow>(
+        new sf::RenderWindow(sf::VideoMode(screenSize.x, screenSize.y), "PingPong"));
     this->window->setFramerateLimit(50);
-    this->ball = new Ball(5);
-    this->leftBar = new Bar({10, 50}, {20, screenSize.y / 2});
-    this->rightBar = new Bar({10, 50}, {screenSize.x - 30, screenSize.y / 2});
-    this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
-    this->menu = new Menu(screenSize, {"1 player", "2 players"});
-    this->menuBtn = new Button("MenuBtn.png", 25, 25);
+    this->ball = Ball(5);
+    this->leftBar = Bar({10, 50}, {20, screenSize.y / 2});
+    this->rightBar = Bar({10, 50}, {screenSize.x - 30, screenSize.y / 2});
+    this->ball.setPosition({screenSize.x / 2, screenSize.y / 2});
+    this->menu = std::unique_ptr<Menu>(new Menu(screenSize, {"1 player", "2 players"}));
+    this->menuBtn = std::unique_ptr<Button>(new Button("MenuBtn.png", 25, 25));
     this->menuBtn->setFillColor(sf::Color::White);
     this->p2BtnPressed = pressedBtn::none;
     this->p1BtnPressed = pressedBtn::none;
 }
 
-PingPong::~PingPong()
-{
-    delete this->window;
-    delete this->ball;
-    delete this->leftBar;
-    delete this->rightBar;
-    delete this->scoreTxt;
-    delete this->menu;
-}
-
 void PingPong::processBallCollisions()
 {
-    sf::Vector2f ballPos = this->ball->getPosition();
-    sf::Vector2f ballSpeed = this->ball->getSpeed();
+    sf::Vector2f ballPos = this->ball.getPosition();
+    sf::Vector2f ballSpeed = this->ball.getSpeed();
     //bounse against up and down
-    if(ballPos.y + this->ball->getRadius() >= this->screenSize.y || ballPos.y <= 0)
+    if(ballPos.y + this->ball.getRadius() >= this->screenSize.y || ballPos.y <= 0)
     {
         sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(ballSpeed.x * 2, 0);
         newSpeed = {-newSpeed.x, -newSpeed.y};
-        this->ball->setSpeed(newSpeed);
+        this->ball.setSpeed(newSpeed);
     }
     //bounce against left and right
-    if(ballPos.x + this->ball->getRadius() >= this->screenSize.x || ballPos.x <= 0)
+    if(ballPos.x + this->ball.getRadius() >= this->screenSize.x || ballPos.x <= 0)
     {
         if(ballPos.x <= 0)
         {
@@ -54,20 +45,20 @@ void PingPong::processBallCollisions()
         } else {
             this->score[1]++;
         }
-        this->ball->setPosition({screenSize.x / 2, screenSize.y / 2});
+        this->ball.setPosition({screenSize.x / 2, screenSize.y / 2});
         this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
     }
-    if(this->leftBar->intersect(this->ball->getCircleShape()))
+    if(this->leftBar.intersect(this->ball.getCircleShape()))
     {
         sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(0, ballSpeed.y * 2);
         newSpeed = {-newSpeed.x, -newSpeed.y};
-        this->ball->setSpeed(newSpeed);   
+        this->ball.setSpeed(newSpeed);   
     }
-    if(this->rightBar->intersect(this->ball->getCircleShape()))
+    if(this->rightBar.intersect(this->ball.getCircleShape()))
     {
         sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(0, ballSpeed.y * 2);
         newSpeed = {-newSpeed.x, -newSpeed.y};
-        this->ball->setSpeed(newSpeed);
+        this->ball.setSpeed(newSpeed);
     }
 }
 
@@ -77,20 +68,20 @@ void PingPong::moveBars()
     {
         if(this->p1BtnPressed == pressedBtn::up)
         {
-            this->leftBar->moveUp();
+            this->leftBar.moveUp();
         } else if(this->p1BtnPressed == pressedBtn::down)
         {
-            this->leftBar->moveDown();
+            this->leftBar.moveDown();
         }
     }
     if(this->p2BtnPressed != pressedBtn::none)
     {
         if(this->p2BtnPressed == pressedBtn::up)
         {
-            this->rightBar->moveUp();
+            this->rightBar.moveUp();
         } else if(this->p2BtnPressed == pressedBtn::down)
         {
-            this->rightBar->moveDown();
+            this->rightBar.moveDown();
         }
     }
 }
@@ -182,7 +173,7 @@ void PingPong::processEvent(const sf::Event& e)
 void PingPong::ProcessEvents()
 {
     this->processBallCollisions();
-    this->ball->move();
+    this->ball.move();
     this->moveBars();
     sf::Event e;
     while(this->window->pollEvent(e))
@@ -192,11 +183,11 @@ void PingPong::ProcessEvents()
     // need to change 20 and 40 to bar middle
     if(this->gameStatus == status::pve)
     {
-        if(rightBar->getPosition().y + 20 > this->ball->getPosition().y)
+        if(this->rightBar.getPosition().y + 20 > this->ball.getPosition().y)
         {
-            this->rightBar->moveUp();
-        } else if(rightBar->getPosition().y + 40 < this->ball->getPosition().y){
-            this->rightBar->moveDown();
+            this->rightBar.moveUp();
+        } else if(this->rightBar.getPosition().y + 40 < this->ball.getPosition().y){
+            this->rightBar.moveDown();
         }
     }
 }
@@ -204,9 +195,9 @@ void PingPong::ProcessEvents()
 void PingPong::UpdateWindow()
 {
     this->window->clear();
-    this->window->draw(*this->leftBar);
-    this->window->draw(*this->rightBar);
-    this->window->draw(*this->ball);
+    this->window->draw(this->leftBar);
+    this->window->draw(this->rightBar);
+    this->window->draw(this->ball);
     this->window->draw(*this->scoreTxt);
     if(this->gameStatus == status::menu)
     {

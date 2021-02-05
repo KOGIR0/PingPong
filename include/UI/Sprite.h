@@ -11,7 +11,6 @@ class Sprite : public sf::Drawable
 {
 public:
     Sprite();
-    Sprite(const Sprite& s);
     Sprite(const std::string& path);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     //void draw(sf::RenderWindow* rw);
