@@ -131,6 +131,7 @@ void PingPong::processMouseBtnPress(const sf::Event& e)
     std::cout << pressResult << std::endl;
     if(pressResult != -1)
     {
+        this->ball.setPosition({this->screenSize.x / 2, this->screenSize.y / 2});
         this->score = {0, 0};
         this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
     }

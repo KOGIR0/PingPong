@@ -19,8 +19,8 @@ bool Bar::intersect(const sf::CircleShape& cs)
     sf::Vector2f rsSize = this->rs.getSize();
     sf::Vector2f csPos = cs.getPosition();
     float csR = cs.getRadius();
-    return (rsPos.x < csPos.x + 2*cs.getRadius()) &&
-        (rsPos.x + rsSize.x >= csPos.x + cs.getRadius()) &&
+    return (rsPos.x < csPos.x + cs.getRadius()) &&
+        (rsPos.x + rsSize.x >= csPos.x - cs.getRadius()) &&
         (rsPos.y < csPos.y && rsPos.y + rsSize.y > csPos.y);
 }
 
