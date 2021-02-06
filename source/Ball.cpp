@@ -6,7 +6,7 @@ Ball::Ball(const float& radius)
     this->cs = sf::CircleShape(radius);
     this->cs.setFillColor(sf::Color::Green);
     this->cs.setOrigin({radius, radius});
-    sf::Vector2f speed((float)(rand() % 11 - 5), (float)(rand() % 11 - 5));
+    sf::Vector2f speed(2., 0);
     this->speed = speed;
 }
 

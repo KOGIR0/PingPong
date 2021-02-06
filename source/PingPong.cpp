@@ -45,6 +45,7 @@ void PingPong::processBallCollisions()
         } else {
             this->score[1]++;
         }
+        this->ball = Ball(5);
         this->ball.setPosition({screenSize.x / 2, screenSize.y / 2});
         this->scoreTxt->setString(std::to_string(score[0]) + " : " + std::to_string(score[1]));
     }
@@ -52,12 +53,14 @@ void PingPong::processBallCollisions()
     {
         sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(0, ballSpeed.y * 2);
         newSpeed = {-newSpeed.x, -newSpeed.y};
+        newSpeed += {(float)(random() % 6) / 10.f, (float)(random() % 41 - 20) / 10.f};
         this->ball.setSpeed(newSpeed);   
     }
     if(this->rightBar.intersect(this->ball.getCircleShape()))
     {
         sf::Vector2f newSpeed = ballSpeed - sf::Vector2f(0, ballSpeed.y * 2);
         newSpeed = {-newSpeed.x, -newSpeed.y};
+        newSpeed += {(float)(-random() % 6) / 10.f, (float)(random() % 41 - 20) / 10.f};
         this->ball.setSpeed(newSpeed);
     }
 }
