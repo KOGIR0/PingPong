@@ -23,3 +23,6 @@ if (SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR} include include/UI include/Network)
     target_link_libraries(PingPong.exe ${SFML_LIBRARIES})
 endif()
+
+file(COPY ./resources/MenuBtn.png DESTINATION .)
+file(COPY ./resources/times-new-roman.ttf DESTINATION .)

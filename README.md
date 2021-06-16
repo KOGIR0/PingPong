@@ -13,4 +13,3 @@ ____
 - run "cmake .." to build makefile
 - run "make" to build project
 After that in build directory you will find PingPong.exe
-Also you need to move .ttf file from resources folder to build directory

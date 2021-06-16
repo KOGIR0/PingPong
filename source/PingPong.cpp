@@ -131,7 +131,6 @@ void PingPong::processMouseBtnPress(const sf::Event& e)
 {
     sf::Vector2i mousePosition = {e.mouseButton.x, e.mouseButton.y};
     int pressResult = this->menu->processClick(mousePosition);
-    std::cout << pressResult << std::endl;
     if(pressResult != -1)
     {
         this->ball.setPosition({this->screenSize.x / 2, this->screenSize.y / 2});
